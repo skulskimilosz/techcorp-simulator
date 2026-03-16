@@ -1,0 +1,27 @@
+public class Employee {
+    private String name;
+    private int skill;
+    private double salary;
+
+    public Employee(String name, int skill, double salary) {
+        this.name = name;
+        this.skill = skill;
+        this.salary = salary;
+    }
+
+    public int work() {
+        return skill;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSkill() {
+        return skill;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+}
