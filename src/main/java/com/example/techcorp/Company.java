@@ -98,4 +98,36 @@ public class Company {
             throw new IllegalArgumentException("Company cash cannot be negative.");
         }
     }
+
+    public void reduceCash(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot reduce cash by negative amount.");
+        }
+        this.cash -= amount;
+        if (this.cash < 0) {
+            this.cash = 0;
+        }
+    }
+
+    public void addCash(double amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot add negative cash.");
+        }
+        this.cash += amount;
+    }
+
+    public void payEmployeesMonthly() {
+        double totalSalaries = 0;
+        for (Employee employee : employees) {
+            totalSalaries += employee.getSalary();
+        }
+
+        if (cash >= totalSalaries) {
+            cash -= totalSalaries;
+            System.out.println("Paid " + employees.size() + " employees. Total cost: " + totalSalaries);
+        } else {
+            System.out.println("ERROR: Not enough cash to pay employees!");
+            System.out.println("Required: " + totalSalaries + ", Available: " + cash);
+        }
+    }
 }

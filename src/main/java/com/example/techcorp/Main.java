@@ -1,39 +1,30 @@
 package com.example.techcorp;
 
+import com.example.techcorp.engine.GameEngine;
+import com.example.techcorp.ui.ConsoleUI;
+
 public class Main {
 
     public static void main(String[] args) {
         Company company = new Company("TechCorp", 50_000);
 
-        Employee anna = new Developer("Anna", 9, 8_000);
-        Employee piotr = new Tester("Piotr", 6, 6_500);
-        Employee ewa = new Manager("Ewa", 7, 9_000);
-        Employee tomek = new Intern("Tomek", 4, 2_000);
-
-        company.hire(anna);
-        company.hire(piotr);
-        company.hire(ewa);
-        company.hire(tomek);
+        company.hire(new Developer("Anna", 9, 8_000));
+        company.hire(new Tester("Piotr", 6, 6_500));
+        company.hire(new Manager("Ewa", 7, 9_000));
+        company.hire(new Intern("Tomek", 4, 2_000));
 
         Project mobileApp = new Project("Mobile App", 40);
-        mobileApp.addEmployee(anna);
-        mobileApp.addEmployee(piotr);
-        mobileApp.addEmployee(ewa);
-        mobileApp.addEmployee(tomek);
+        mobileApp.addEmployee(company.getEmployees().get(0));
+        mobileApp.addEmployee(company.getEmployees().get(1));
+        mobileApp.addEmployee(company.getEmployees().get(2));
+        mobileApp.addEmployee(company.getEmployees().get(3));
 
         company.startProject(mobileApp);
 
-        System.out.println("INITIAL STATE");
-        company.showStatus();
+        ConsoleUI ui = new ConsoleUI();
+        GameEngine engine = new GameEngine(company, ui);
+        engine.run();
 
-        int turn = 1;
-        while (!mobileApp.isFinished()) {
-            System.out.println("\n--- TURN " + turn + " ---");
-            mobileApp.workOneTurn();
-            company.showStatus();
-            turn++;
-        }
-
-        System.out.println("\nProject '" + mobileApp.getName() + "' finished.");
+        System.out.println("\nGame ended!");
     }
 }
