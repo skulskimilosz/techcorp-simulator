@@ -116,6 +116,56 @@ Bank oferuje kredyty z 3% miesięcznym oprocentowaniem. Limit kredytowy rośnie 
 
 ---
 
-## Autor
+## Deployment na Render
 
+Projekt TechCorp Simulator został rozszerzony o warstwę webową opartą na Spring Boot i wdrożony na platformie Render.
+
+**Co zostało zmienione**
+
+- **pom.xml** — dodano zależności `spring-boot-starter-web` oraz `spring-boot-maven-plugin`.
+- **TechCorpApplication.java** — klasa startowa z adnotacją `@SpringBootApplication`.
+- **api/HealthController.java** — endpoint `GET /health` potwierdzający działanie serwera.
+- **api/GameController.java** — endpointy REST do zarządzania stanem gry.
+- **src/main/resources/application.properties** — konfiguracja portu: `${PORT:8080}`.
+- **Dockerfile** — plik konfiguracyjny do konteneryzacji (wymagany przez Render).
+
+### Dockerfile
+
+Dockerfile wykorzystuje multi-stage build:
+
+1. Etap budowania — obraz `maven:3.8.5-openjdk-17` kompiluje projekt i tworzy JAR.
+2. Etap uruchamiania — obraz `eclipse-temurin:17-jre` uruchamia gotowy JAR.
+
+### Dostępne endpointy API
+
+| Metoda | Endpoint | Opis |
+|--------:|:--------:|:----|
+| GET | `/health` | Sprawdzenie czy serwer działa |
+| GET | `/game/state` | Aktualny stan firmy (tura, gotówka, projekty) |
+| POST | `/game/work` | Symulacja jednej tury pracy |
+| POST | `/game/reset` | Reset gry do stanu początkowego |
+
+**Publiczny URL:** https://techcorp-game-ms-api.onrender.com
+
+Przykład endpointu: https://techcorp-game-ms-api.onrender.com/game/state
+
+### Jak uruchomić lokalnie
+
+Gra konsolowa (bez zmian):
+
+```bash
+mvn compile
+java -cp target/classes com.example.techcorp.Main
+```
+
+Serwer Spring Boot (lokalnie):
+
+```bash
+mvn spring-boot:run
+# lub
+mvn clean package -DskipTests
+java -jar target/techcorp-web-game-1.0.0.jar
+```
+---
+## Autor
 Miłosz Skulski
