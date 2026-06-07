@@ -4,7 +4,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Krok 2: Uruchamianie aplikacji
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-slim
 COPY --from=build /target/techcorp-web-game-10.0.jar techcorp-web-game.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "techcorp-web-game.jar"]
