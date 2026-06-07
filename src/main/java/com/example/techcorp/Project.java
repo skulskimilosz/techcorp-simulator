@@ -5,19 +5,24 @@ import java.util.List;
 
 public class Project {
 
-    private String name;
-    private int requiredWork;
+    private final String name;
+    private final int requiredWork;
+    private final double reward;
     private int progress;
-    private List<Employee> team;
+    private final List<Employee> team;
+    private ProjectStatus status;
 
-    public Project(String name, int requiredWork) {
+    public Project(String name, int requiredWork, double reward) {
         validateName(name);
         validateRequiredWork(requiredWork);
+        if (reward < 0) throw new IllegalArgumentException("Reward cannot be negative.");
 
         this.name = name;
         this.requiredWork = requiredWork;
+        this.reward = reward;
         this.progress = 0;
         this.team = new ArrayList<>();
+        this.status = ProjectStatus.ACTIVE;
     }
 
     public void addEmployee(Employee employee) {
@@ -27,7 +32,16 @@ public class Project {
         team.add(employee);
     }
 
+    // New helper method to safely remove an employee if they get fired from the company
+    public void removeEmployee(Employee employee) {
+        team.remove(employee);
+    }
+
     public void workOneTurn() {
+        if (status == ProjectStatus.COMPLETED) {
+            return;
+        }
+
         for (Employee employee : team) {
             progress += employee.work();
         }
@@ -35,14 +49,14 @@ public class Project {
         if (progress > requiredWork) {
             progress = requiredWork;
         }
+
+        if (progress >= requiredWork) {
+            status = ProjectStatus.COMPLETED;
+        }
     }
 
     public boolean isFinished() {
-        return progress >= requiredWork;
-    }
-
-    public int getCompletionPercentage() {
-        return (progress * 100) / requiredWork;
+        return status == ProjectStatus.COMPLETED;
     }
 
     public String getName() {
@@ -57,8 +71,16 @@ public class Project {
         return progress;
     }
 
+    public double getReward() {
+        return reward;
+    }
+
     public List<Employee> getTeam() {
         return team;
+    }
+
+    public ProjectStatus getStatus() {
+        return status;
     }
 
     private void validateName(String name) {

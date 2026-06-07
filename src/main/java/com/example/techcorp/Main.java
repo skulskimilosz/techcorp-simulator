@@ -8,16 +8,23 @@ public class Main {
     public static void main(String[] args) {
         Company company = new Company("TechCorp", 50_000);
 
-        company.hire(new Developer("Anna", 9, 8_000));
-        company.hire(new Tester("Piotr", 6, 6_500));
-        company.hire(new Manager("Ewa", 7, 9_000));
-        company.hire(new Intern("Tomek", 4, 2_000));
+        // Predefined initial workforce using your clean OOP subclasses
+        Employee anna = new Developer("Anna", 9, 4500);
+        Employee piotr = new Tester("Piotr", 6, 3500);
+        Employee ewa = new Manager("Ewa", 7, 5000);
+        Employee tomek = new Intern("Tomek", 4, 1500);
 
-        Project mobileApp = new Project("Mobile App", 40);
-        mobileApp.addEmployee(company.getEmployees().get(0));
-        mobileApp.addEmployee(company.getEmployees().get(1));
-        mobileApp.addEmployee(company.getEmployees().get(2));
-        mobileApp.addEmployee(company.getEmployees().get(3));
+        company.hire(anna);
+        company.hire(piotr);
+        company.hire(ewa);
+        company.hire(tomek);
+
+        // Bootstrap the first active project contract
+        Project mobileApp = new Project("Mobile App", 40, 30000);
+        mobileApp.addEmployee(anna);
+        mobileApp.addEmployee(piotr);
+        mobileApp.addEmployee(ewa);
+        mobileApp.addEmployee(tomek);
 
         company.startProject(mobileApp);
 
