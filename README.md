@@ -50,7 +50,7 @@ src/main/java/com/example/techcorp/
     ├── MarketSlowdownEvent.java # Spowolnienie rynku – straty finansowe
     ├── EmployeeStrikeEvent.java # Strajk pracowniczy – koszt proporcjonalny do płac
     ├── GovernmentGrantEvent.java# Grant rządowy – dodatkowe środki
-    ├── DataBreachEvent.java     # Naruszenie GDPR – kara finansowa
+    ├── DataBreachEvent.java     # Naruszenie GDPR (RODO) – kara finansowa
     ├── OfficeFireEvent.java     # Pożar biura – koszty naprawy
     └── TechBoomEvent.java       # Boom technologiczny – dodatkowe przychody
 ```

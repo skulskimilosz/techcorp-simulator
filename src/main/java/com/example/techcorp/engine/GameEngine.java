@@ -72,8 +72,21 @@ public class GameEngine {
      * </p>
      */
     public void run() {
-        System.out.println("=== Welcome to TechCorp Management Simulator ===");
-        System.out.println("Goal: Complete all " + TOTAL_GAME_PROJECTS + " projects to win the game!\n");
+        System.out.println("\n=== Welcome to TechCorp Management Simulator ===");
+        System.out.println("Goal: Complete all " + TOTAL_GAME_PROJECTS + " projects to win the game!");
+        System.out.println();
+        System.out.println("--- HOW TO PLAY ---");
+        System.out.println("* You can work on ONE project at a time.");
+        System.out.println("* Each turn costs salaries — keep an eye on your cash!");
+        System.out.println("* After completing a project, pick a new one from the market.");
+        System.out.println("* There are 4 roles in the company: Developer, Tester, Manager, and Intern. Each contributes different skill power to projects.");
+        System.out.println("* Hire employees to speed up projects, fire them to cut costs.");
+        System.out.println("* Take bank loans if you run low on cash (3% interest per turn).");
+        System.out.println("* Loan limit increases every 5 turns as your company grows.");
+        System.out.println("* Random market events can help or hurt you each turn (48% chance).");
+        System.out.println("* Cash drops below 0 = BANKRUPTCY. Game over.");
+        System.out.println("-------------------");
+        System.out.println();
 
         while (running && !isGameOver()) {
             // Nagłówek tury z aktualnym statusem firmy
@@ -265,7 +278,7 @@ public class GameEngine {
         for (int i = 0; i < list.size(); i++) {
             Employee e = list.get(i);
             System.out.println((i + 1) + ". " + e.getName()
-                    + " [" + e.getRoleName() + "] - Salary: " + e.getSalary());
+                    + " [" + e.getRoleName() + "] | Skill: " + e.getSkill() + " | Salary: " + e.getSalary());
         }
         System.out.println("0. Cancel termination");
 

@@ -148,7 +148,7 @@ public class Company {
             System.out.println("Paid monthly loan interest (3%): -" + interestCost);
         }
 
-        // Sprawdzamy wypłacalność PRZED odjęciem (naprawa buga z oryginalnego kodu)
+        // Sprawdzamy wypłacalność PRZED odjęciem kosztów, aby pokazać ujemne saldo w przypadku bankructwa
         if (this.cash < totalExpenses) {
             System.out.println("❌ FINANCIAL COLLAPSE: Not enough cash to cover salaries and interest!");
             this.cash -= totalExpenses; // Odejmujemy aby pokazać ujemne saldo
