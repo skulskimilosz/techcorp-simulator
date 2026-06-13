@@ -1,0 +1,5 @@
+company=TechCorp
+cash=225.0
+loan=50000.0
+turn=12
+completedProjects=2

@@ -39,6 +39,8 @@ public class Company {
     /** Lista wszystkich projektów (aktywnych i ukończonych). */
     private final List<Project> projects;
 
+    public String getName() { return name; }
+
     /**
      * Tworzy nową firmę z podaną nazwą i kapitałem startowym.
      *

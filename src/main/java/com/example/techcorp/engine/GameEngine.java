@@ -15,6 +15,10 @@ import com.example.techcorp.events.TechBoomEvent;
 
 import java.util.List;
 
+import com.example.techcorp.domain.GameState;
+import com.example.techcorp.repository.FileGameRepository;
+import com.example.techcorp.service.SaveManager;
+
 /**
  * Silnik gry TechCorp – główna pętla rozgrywki.
  * <p>
@@ -41,6 +45,8 @@ public class GameEngine {
 
     /** Numer aktualnej tury rozgrywki (startuje od 1). */
     private int turn = 1;
+
+    private final SaveManager saveManager = new SaveManager(new FileGameRepository());
 
     /** Flaga kontrolująca główną pętlę gry. False = koniec gry. */
     private boolean running = true;
@@ -167,6 +173,10 @@ public class GameEngine {
             }
         }
 
+        // Autosave po każdej turze – ćwiczenie 5 z lekcji 9
+        GameState state = new GameState(company, turn, getCompletedProjectsCount());
+        saveManager.autosave(state);
+        
         return true;
     }
 
