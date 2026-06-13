@@ -7,6 +7,8 @@ import com.example.techcorp.Intern;
 import com.example.techcorp.Manager;
 import com.example.techcorp.Project;
 import com.example.techcorp.Tester;
+import com.example.techcorp.repository.GameRepository;
+import com.example.techcorp.repository.PostgresGameRepository;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,11 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/game")
 public class GameController {
-
+    
+    private final GameRepository repository = new PostgresGameRepository();
     // Stan gry przechowywany w pamięci serwera
     private Company company = createInitialCompany();
     private int turn = 1;
-
+    
     /**
      * GET /game/state
      * Zwraca aktualny stan firmy jako tekst: turę, gotówkę, liczbę pracowników i projekty.
@@ -93,9 +96,14 @@ public class GameController {
             }
         }
 
-        turn++;
-        result.append("Cash after turn: ").append(company.getCash());
-        return result.toString();
+        // Autosave to PostgreSQL database after each turn
+     long completedCount = company.getProjects().stream().filter(Project::isFinished).count();
+     com.example.techcorp.domain.GameState state = new com.example.techcorp.domain.GameState(company, turn, (int) completedCount);
+     repository.save(state);
+
+     turn++;
+     result.append("Cash after turn: ").append(company.getCash());
+     return result.toString();
     }
 
     /**
