@@ -51,6 +51,9 @@ public class GameEngine {
     /** Flaga kontrolująca główną pętlę gry. False = koniec gry. */
     private boolean running = true;
 
+    /** Unikalny identyfikator gry (8 znaków) – używany do zapisu stanu w bazie danych. */
+    private final String gameId = java.util.UUID.randomUUID().toString().substring(0, 8);
+
     /** Łączna liczba projektów potrzebna do wygrania gry. */
     private static final int TOTAL_GAME_PROJECTS = 5;
 
@@ -174,7 +177,7 @@ public class GameEngine {
         }
 
         // Autosave po każdej turze – ćwiczenie 5 z lekcji 9
-        GameState state = new GameState(company, turn, getCompletedProjectsCount());
+        GameState state = new GameState(gameId, company, turn, getCompletedProjectsCount());
         saveManager.autosave(state);
         
         return true;

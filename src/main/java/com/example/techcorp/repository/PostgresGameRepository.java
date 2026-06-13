@@ -21,19 +21,19 @@ public class PostgresGameRepository implements GameRepository {
             return;
         }
 
-        String sql = "INSERT INTO game_state (company_name, cash, loan_amount, current_turn, completed_projects) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO game_state (game_id, company_name, cash, loan_amount, current_turn, completed_projects) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, state.getCompanyName());
-            pstmt.setDouble(2, state.getCash());
-            pstmt.setDouble(3, state.getLoanAmount());
-            pstmt.setInt(4, state.getCurrentTurn());
-            pstmt.setInt(5, state.getCompletedProjects());
+            pstmt.setString(1, state.getGameId());
+            pstmt.setString(2, state.getCompanyName());    
+            pstmt.setDouble(3, state.getCash());
+            pstmt.setDouble(4, state.getLoanAmount());
+            pstmt.setInt(5, state.getCurrentTurn());
+            pstmt.setInt(6, state.getCompletedProjects());
 
             pstmt.executeUpdate();
-            System.out.println("[POSTGRES] Game state saved successfully to Render Database!");
+            System.out.println("[POSTGRES] Game state saved successfully for Game ID: " + state.getGameId());
 
         } catch (Exception e) {
             System.out.println("[POSTGRES] Database error during autosave: " + e.getMessage());

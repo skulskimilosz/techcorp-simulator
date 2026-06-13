@@ -7,13 +7,15 @@ import com.example.techcorp.Company;
  * Wzorzec z lekcji 9 – obiekt persystencji.
  */
 public class GameState {
+    private String gameId; // Nowe pole
     private String companyName;
     private double cash;
     private double loanAmount;
     private int currentTurn;
     private int completedProjects;
 
-    public GameState(Company company, int currentTurn, int completedProjects) {
+    public GameState(String gameId, Company company, int currentTurn, int completedProjects) {
+        this.gameId = gameId;
         this.companyName = company.getName() != null ? company.getName() : "TechCorp";
         this.cash = company.getCash();
         this.loanAmount = company.getLoanAmount();
@@ -21,6 +23,7 @@ public class GameState {
         this.completedProjects = completedProjects;
     }
 
+    public String getGameId()         { return gameId; }
     public String getCompanyName()    { return companyName; }
     public double getCash()           { return cash; }
     public double getLoanAmount()     { return loanAmount; }

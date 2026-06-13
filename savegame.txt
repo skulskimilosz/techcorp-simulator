@@ -1,5 +1,5 @@
 company=TechCorp
-cash=225.0
-loan=50000.0
-turn=12
-completedProjects=2
+cash=15000.0
+loan=0.0
+turn=2
+completedProjects=0

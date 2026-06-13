@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/game")
 public class GameController {
-    
+    private String gameId = java.util.UUID.randomUUID().toString().substring(0, 8); // Startowy unikalny ID
     private final GameRepository repository = new PostgresGameRepository();
     // Stan gry przechowywany w pamięci serwera
     private Company company = createInitialCompany();
@@ -98,7 +98,7 @@ public class GameController {
 
         // Autosave to PostgreSQL database after each turn
      long completedCount = company.getProjects().stream().filter(Project::isFinished).count();
-     com.example.techcorp.domain.GameState state = new com.example.techcorp.domain.GameState(company, turn, (int) completedCount);
+     com.example.techcorp.domain.GameState state = new com.example.techcorp.domain.GameState(gameId, company, turn, (int) completedCount);
      repository.save(state);
 
      turn++;
@@ -113,8 +113,8 @@ public class GameController {
     @PostMapping("/reset")
     public String reset() {
         company = createInitialCompany();
-        turn = 1;
-        return "Game reset. New game started with 50000 cash and 4 employees.";
+        gameId = java.util.UUID.randomUUID().toString().substring(0, 8); // Nowy ID dla nowej gry!
+        return "Game reset. New game started with ID: " + gameId;
     }
 
     /**

@@ -23,6 +23,7 @@ public class FileGameRepository implements GameRepository {
     @Override
     public void save(GameState state) {
         try (FileWriter writer = new FileWriter(SAVE_FILE)) {
+            writer.write("gameId=" + state.getGameId() + "\n");
             writer.write("company=" + state.getCompanyName() + "\n");
             writer.write("cash=" + state.getCash() + "\n");
             writer.write("loan=" + state.getLoanAmount() + "\n");
@@ -40,6 +41,7 @@ public class FileGameRepository implements GameRepository {
     @Override
     public GameState load() {
         try (BufferedReader reader = new BufferedReader(new FileReader(SAVE_FILE))) {
+            String gameId = "FILE_LOAD"; // Placeholder ID for file load
             String companyName = "TechCorp";
             double cash = 0;
             double loan = 0;
@@ -51,6 +53,7 @@ public class FileGameRepository implements GameRepository {
                 String[] parts = line.split("=");
                 if (parts.length < 2) continue;
                 switch (parts[0]) {
+                    case "gameId"           -> gameId = parts[1];
                     case "company"          -> companyName = parts[1];
                     case "cash"             -> cash = Double.parseDouble(parts[1]);
                     case "loan"             -> loan = Double.parseDouble(parts[1]);
@@ -60,7 +63,7 @@ public class FileGameRepository implements GameRepository {
             }
 
             Company dummy = new Company(companyName, cash);
-            return new GameState(dummy, turn, completed);
+            return new GameState(gameId, dummy, turn, completed);
 
         } catch (IOException e) {
             System.out.println("[LOAD] No save file found.");
