@@ -1,5 +1,6 @@
+gameId=08bdf828
 company=TechCorp
-cash=15000.0
+cash=13000.0
 loan=0.0
 turn=2
 completedProjects=0
