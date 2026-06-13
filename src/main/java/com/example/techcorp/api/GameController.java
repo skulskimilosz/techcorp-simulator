@@ -114,6 +114,7 @@ public class GameController {
     public String reset() {
         company = createInitialCompany();
         gameId = java.util.UUID.randomUUID().toString().substring(0, 8); // Nowy ID dla nowej gry!
+        turn = 1;
         return "Game reset. New game started with ID: " + gameId;
     }
 

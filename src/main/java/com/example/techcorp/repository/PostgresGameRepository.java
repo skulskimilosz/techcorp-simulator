@@ -21,7 +21,7 @@ public class PostgresGameRepository implements GameRepository {
             return;
         }
 
-        String sql = "INSERT INTO game_state (game_id, company_name, cash, loan_amount, current_turn, completed_projects) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO game_state (game_id, company_name, cash, loan_amount, current_turn, completed_projects) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
