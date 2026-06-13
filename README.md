@@ -166,6 +166,68 @@ mvn spring-boot:run
 mvn clean package -DskipTests
 java -jar target/techcorp-web-game-1.0.0.jar
 ```
+Warstwa Persystencji – PostgreSQL i wzorzec Repository
+Cel
+Dane gry (gotówka, tury, projekty) istnieją domyślnie tylko w pamięci serwera. Po restarcie aplikacji wszystko znika. Aby temu zapobiec, projekt implementuje warstwę persystencji opartą na bazie danych PostgreSQL.
+
+Architektura
+Projekt stosuje wzorzec Repository — kluczową zasadę inżynierii oprogramowania:
+GameController (logika gry)
+        |
+        v
+  GameRepository (interfejs)
+        |
+        v
+PostgresGameRepository (implementacja JDBC)
+        |
+        v
+  Baza PostgreSQL na Render
+GameController nie wie jak dane są przechowywane — zna tylko interfejs GameRepository. Dzięki temu można w każdej chwili zamienić PostgreSQL na pliki tekstowe bez zmiany logiki gry. Jest to bezpośrednie zastosowanie zasady Single Responsibility Principle.
+
+Klasy warstwy persystencji
+KlasaOdpowiedzialnośćGameRepositoryInterfejs — definiuje save() i load()PostgresGameRepositoryImplementacja JDBC — komunikacja z baząGameStateObiekt reprezentujący stan gry do zapisania
+
+Co jest zapisywane po każdej turze
+Po każdym wywołaniu POST /game/work aplikacja automatycznie zapisuje do bazy:
+KolumnaOpisgame_idUnikalny identyfikator sesji grycompany_nameNazwa firmycashAktualna gotówkaloan_amountZadłużeniecurrent_turnNumer turycompleted_projectsLiczba ukończonych projektówsaved_atZnacznik czasu zapisu
+
+Tabela w PostgreSQL
+sqlCREATE TABLE game_state (
+    id SERIAL PRIMARY KEY,
+    game_id VARCHAR(20),
+    company_name VARCHAR(100),
+    cash DOUBLE PRECISION,
+    loan_amount DOUBLE PRECISION,
+    current_turn INT,
+    completed_projects INT,
+    saved_at TIMESTAMP DEFAULT NOW()
+);
+
+Konfiguracja na Render
+Połączenie z bazą odbywa się przez zmienną środowiskową DB_URL ustawioną na Render:
+DB_URL=jdbc:postgresql://host:port/dbname?user=xxx&password=yyy
+Aplikacja odczytuje ją w runtime:
+javaprivate final String url = System.getenv("DB_URL");
+Dzięki temu dane połączenia nigdy nie trafiają do repozytorium GitHub — to standard bezpieczeństwa w aplikacjach produkcyjnych.
+
+Przepływ danych
+Użytkownik wywołuje POST /game/work
+        |
+        v
+GameController przetwarza turę
+        |
+        v
+Tworzy obiekt GameState ze stanem gry
+        |
+        v
+Wywołuje repository.save(state)
+        |
+        v
+PostgresGameRepository wykonuje SQL INSERT
+        |
+        v
+Stan gry zapisany w bazie PostgreSQL na Render
+
 ---
 ## Autor
 Miłosz Skulski
