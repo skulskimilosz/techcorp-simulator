@@ -29,14 +29,14 @@ mvn exec:java
 src/main/java/com/example/techcorp/
 │
 ├── Main.java                    # Punkt wejścia – inicjalizacja i start gry
-├── Company.java                 # Stan firmy: gotówka, pracownicy, projekty
+├── Company.java                 # Stan firmy: gotówka/pożyczki, pracownicy, projekty
 ├── Employee.java                # Abstrakcyjna klasa bazowa pracownika
 ├── Developer.java               # Podklasa: pełny wkład skilla (×1)
 ├── Tester.java                  # Podklasa: połowa skilla (×0.5)
 ├── Manager.java                 # Podklasa: jedna trzecia skilla (×0.33)
 ├── Intern.java                  # Podklasa: jedna czwarta skilla (×0.25)
 ├── EmployeeFactory.java         # Wzorzec Factory – losowanie kandydatów
-├── Project.java                 # Kontrakt projektowy z postępem i nagrodą
+├── Project.java                 # Kontrakt projektowy z postępem i nagrodą, metody z dodawaniem pracowników do projektu, zwalnianiem ich czyli usuwanie z projektu
 ├── ProjectStatus.java           # Enum: ACTIVE / COMPLETED
 │
 ├── engine/
