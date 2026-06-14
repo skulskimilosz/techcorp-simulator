@@ -6,7 +6,7 @@ Gra turowa, w której gracz zarządza firmą technologiczną – zatrudnia praco
 
 ---
 
-## Jak uruchomić
+## Jak uruchomić lokalnie
 
 **Wymagania:** Java 17+, Maven 3.6+
 
@@ -149,7 +149,7 @@ Dockerfile wykorzystuje multi-stage build:
 
 Przykład endpointu: https://techcorp-game-ms-api.onrender.com/game/state
 
-### Jak uruchomić lokalnie
+### Jak uruchomić lokalnie (Spring Boot)
 
 Gra konsolowa (bez zmian):
 
@@ -166,12 +166,21 @@ mvn spring-boot:run
 mvn clean package -DskipTests
 java -jar target/techcorp-web-game-1.0.0.jar
 ```
-Warstwa Persystencji – PostgreSQL i wzorzec Repository
-Cel
-Dane gry (gotówka, tury, projekty) istnieją domyślnie tylko w pamięci serwera. Po restarcie aplikacji wszystko znika. Aby temu zapobiec, projekt implementuje warstwę persystencji opartą na bazie danych PostgreSQL.
+# Warstwa Persystencji – PostgreSQL i wzorzec Repository
 
-Architektura
-Projekt stosuje wzorzec Repository — kluczową zasadę inżynierii oprogramowania:
+## Cel
+
+Dane gry (gotówka, tury, projekty) istnieją domyślnie tylko w pamięci serwera.
+Po restarcie aplikacji wszystko znika. Aby temu zapobiec, projekt implementuje
+**warstwę persystencji** opartą na bazie danych PostgreSQL.
+
+---
+
+## Architektura
+
+Projekt stosuje **wzorzec Repository** — kluczową zasadę inżynierii oprogramowania:
+
+```
 GameController (logika gry)
         |
         v
@@ -182,17 +191,44 @@ PostgresGameRepository (implementacja JDBC)
         |
         v
   Baza PostgreSQL na Render
-GameController nie wie jak dane są przechowywane — zna tylko interfejs GameRepository. Dzięki temu można w każdej chwili zamienić PostgreSQL na pliki tekstowe bez zmiany logiki gry. Jest to bezpośrednie zastosowanie zasady Single Responsibility Principle.
+```
 
-Klasy warstwy persystencji
-KlasaOdpowiedzialnośćGameRepositoryInterfejs — definiuje save() i load()PostgresGameRepositoryImplementacja JDBC — komunikacja z baząGameStateObiekt reprezentujący stan gry do zapisania
+`GameController` nie wie jak dane są przechowywane — zna tylko interfejs `GameRepository`.
+Dzięki temu można w każdej chwili zamienić PostgreSQL na pliki tekstowe bez zmiany logiki gry.
+Jest to bezpośrednie zastosowanie zasady **Single Responsibility Principle (SRP)**.
 
-Co jest zapisywane po każdej turze
-Po każdym wywołaniu POST /game/work aplikacja automatycznie zapisuje do bazy:
-KolumnaOpisgame_idUnikalny identyfikator sesji grycompany_nameNazwa firmycashAktualna gotówkaloan_amountZadłużeniecurrent_turnNumer turycompleted_projectsLiczba ukończonych projektówsaved_atZnacznik czasu zapisu
+---
 
-Tabela w PostgreSQL
-sqlCREATE TABLE game_state (
+## Klasy warstwy persystencji
+
+| Klasa | Odpowiedzialność |
+|---|---|
+| `GameRepository` | Interfejs — definiuje `save()` i `load()` |
+| `PostgresGameRepository` | Implementacja JDBC — komunikacja z bazą danych |
+| `GameState` | Obiekt reprezentujący stan gry do zapisania |
+
+---
+
+## Co jest zapisywane po każdej turze
+
+Po każdym wywołaniu `POST /game/work` aplikacja automatycznie zapisuje do bazy:
+
+| Kolumna | Opis |
+|---|---|
+| `game_id` | Unikalny identyfikator sesji gry |
+| `company_name` | Nazwa firmy |
+| `cash` | Aktualna gotówka |
+| `loan_amount` | Zadłużenie |
+| `current_turn` | Numer tury |
+| `completed_projects` | Liczba ukończonych projektów |
+| `saved_at` | Znacznik czasu zapisu (automatyczny) |
+
+---
+
+## Tabela w PostgreSQL
+
+```sql
+CREATE TABLE game_state (
     id SERIAL PRIMARY KEY,
     game_id VARCHAR(20),
     company_name VARCHAR(100),
@@ -202,15 +238,32 @@ sqlCREATE TABLE game_state (
     completed_projects INT,
     saved_at TIMESTAMP DEFAULT NOW()
 );
+```
 
-Konfiguracja na Render
-Połączenie z bazą odbywa się przez zmienną środowiskową DB_URL ustawioną na Render:
+---
+
+## Konfiguracja na Render
+
+Połączenie z bazą odbywa się przez zmienną środowiskową `DB_URL` ustawioną na Render:
+
+```
 DB_URL=jdbc:postgresql://host:port/dbname?user=xxx&password=yyy
-Aplikacja odczytuje ją w runtime:
-javaprivate final String url = System.getenv("DB_URL");
-Dzięki temu dane połączenia nigdy nie trafiają do repozytorium GitHub — to standard bezpieczeństwa w aplikacjach produkcyjnych.
+```
 
-Przepływ danych
+Aplikacja odczytuje ją w runtime:
+
+```java
+private final String url = System.getenv("DB_URL");
+```
+
+Dzięki temu **dane połączenia nigdy nie trafiają do repozytorium GitHub** —
+to standard bezpieczeństwa w aplikacjach produkcyjnych.
+
+---
+
+## Przepływ danych
+
+```
 Użytkownik wywołuje POST /game/work
         |
         v
@@ -227,7 +280,74 @@ PostgresGameRepository wykonuje SQL INSERT
         |
         v
 Stan gry zapisany w bazie PostgreSQL na Render
+```
+# Uruchomienie i obsługa projektu (z bazą danych)
 
+## Kompilacja i uruchomienie lokalne
+
+```bash
+mvn clean compile && java -cp target/classes com.example.techcorp.Main
+```
+
+---
+
+## PostgreSQL – konfiguracja
+
+### Instalacja klienta PostgreSQL w GitHub Codespaces
+
+```bash
+sudo apt-get update && sudo apt-get install -y postgresql-client
+```
+
+### Połączenie z bazą danych na Render
+
+```bash
+psql "postgresql://techcorp_db_user:[hasło]@dpg-d8mnfa1kh4rs738iptpg-a.frankfurt-postgres.render.com/techcorp_db"
+```
+
+Struktura adresu bazy danych:
+- `dpg-d8mnfa1kh4rs738iptpg-a` — unikalny identyfikator bazy na Render
+- `.frankfurt-postgres.render.com` — serwer Rendera w regionie Frankfurt
+- `/techcorp_db` — nazwa bazy danych
+
+### Odczyt zapisanych stanów gry
+
+```sql
+SELECT * FROM game_state;
+```
+
+---
+
+## REST API – endpointy
+
+Aplikacja działa na Render pod adresem:
+```
+https://techcorp-game-ms-api.onrender.com
+```
+
+### Reset gry
+
+```bash
+curl -X POST https://techcorp-game-ms-api.onrender.com/game/reset
+```
+
+Resetuje grę do stanu początkowego — nowa firma, nowy `game_id`, tura wraca do 1.
+
+### Nowa tura
+
+```bash
+curl -X POST https://techcorp-game-ms-api.onrender.com/game/work
+```
+
+Symuluje jedną turę pracy — wypłaca wynagrodzenia, postępuje projekty, zapisuje stan do bazy PostgreSQL.
+
+### Stan gry
+
+```bash
+curl https://techcorp-game-ms-api.onrender.com/game/state
+```
+
+Zwraca aktualny stan firmy: turę, gotówkę, pracowników i projekty.
 ---
 ## Autor
 Miłosz Skulski
